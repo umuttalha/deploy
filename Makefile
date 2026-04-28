@@ -3,10 +3,13 @@ PKG    := github.com/umuttalha/deploy
 VERSION ?= dev
 LDFLAGS := -X $(PKG)/internal/version.Version=$(VERSION)
 
-.PHONY: build test lint fmt run tidy clean
+.PHONY: build install test lint fmt run tidy clean
 
 build:
 	go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY) ./cmd/$(BINARY)
+
+install:
+	go install -ldflags "$(LDFLAGS)" ./cmd/$(BINARY)
 
 test:
 	go test ./...
