@@ -1,60 +1,50 @@
-// Package ui renders styled CLI output (status lines, headers, key/value
-// pairs, errors). All styles auto-disable on non-TTY output via lipgloss.
+// Package ui renders clean, minimal CLI output in the style of Vercel CLI.
+// All output uses plain fmt — no colors, no emojis, no lipgloss.
 package ui
 
 import (
 	"fmt"
 	"io"
 	"strings"
-
-	"github.com/charmbracelet/lipgloss"
 )
 
-var (
-	successStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("10")).Bold(true)
-	infoStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("14"))
-	warnStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))
-	dangerStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Bold(true)
-	dimStyle     = lipgloss.NewStyle().Faint(true)
-	labelStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("14")).Bold(true)
-)
-
-// Header prints a single-line branded banner followed by a blank line.
+// Header prints a single dim banner line: "> Name version · repo"
 func Header(w io.Writer, name, version string) {
-	fmt.Fprintln(w, dimStyle.Render(fmt.Sprintf("%s %s · github.com/umuttalha/deploy", name, version)))
-	fmt.Fprintln(w)
+	fmt.Fprintf(w, "> %s %s · github.com/umuttalha/deploy\n", name, version)
 }
 
-// OK prints a green ✓ line.
-func OK(w io.Writer, format string, a ...any) {
-	fmt.Fprintln(w, successStyle.Render("✓"), fmt.Sprintf(format, a...))
+// Info prints an informational line prefixed with ">".
+func Info(w io.Writer, format string, a ...any) {
+	fmt.Fprintf(w, "> %s\n", fmt.Sprintf(format, a...))
 }
 
-// Step prints a cyan → line for ongoing/informational steps.
-func Step(w io.Writer, format string, a ...any) {
-	fmt.Fprintln(w, infoStyle.Render("→"), fmt.Sprintf(format, a...))
+// Error prints an error line prefixed with "> Error:".
+func Error(w io.Writer, msg string) {
+	fmt.Fprintf(w, "> Error: %s\n", msg)
 }
 
-// Warn prints a yellow ⚠ line.
-func Warn(w io.Writer, format string, a ...any) {
-	fmt.Fprintln(w, warnStyle.Render("⚠"), fmt.Sprintf(format, a...))
+// Hint prints an indented hint line below an error.
+func Hint(w io.Writer, msg string) {
+	fmt.Fprintf(w, "  %s\n", msg)
 }
 
-// Fail prints a red ✗ line. If hint is non-empty, it follows on a dim line.
+// Fail prints an error with an optional hint.
 func Fail(w io.Writer, msg, hint string) {
-	fmt.Fprintln(w, dangerStyle.Render("✗"), msg)
+	Error(w, msg)
 	if hint != "" {
-		fmt.Fprintln(w, "  "+dimStyle.Render(hint))
+		Hint(w, hint)
 	}
 }
 
-// KV prints a key/value pair with the key column padded to 10 chars.
-func KV(w io.Writer, key, val string) {
-	fmt.Fprintf(w, "  %s  %s\n", labelStyle.Render(padRight(key, 10)), val)
+// Setting prints a key/value pair as "  - Key: value".
+func Setting(w io.Writer, key, val string) {
+	fmt.Fprintf(w, "  - %s  %s\n", padRight(key+":", 12), val)
 }
 
-// Dim renders text in dim/faint style.
-func Dim(s string) string { return dimStyle.Render(s) }
+// Answered prints a completed prompt in Vercel style: "? Label value".
+func Answered(w io.Writer, label, value string) {
+	fmt.Fprintf(w, "? %s %s\n", label, value)
+}
 
 func padRight(s string, width int) string {
 	if len(s) >= width {

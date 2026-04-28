@@ -40,16 +40,17 @@ var upCmd = &cobra.Command{
 			return errSilent
 		}
 
-		ui.OK(out, "Validated stack %q", upStack.Name)
-		ui.KV(out, "Region", upStack.Region)
-		ui.KV(out, "Storage", string(upStack.Storage))
-		ui.KV(out, "Instance", upStack.InstanceType)
-		ui.KV(out, "Image", fmt.Sprintf("%s / %s:%s", upStack.Image.Registry, upStack.Image.Repo, upStack.Image.Tag))
-		ui.KV(out, "DNS", string(upStack.DNS))
-		ui.KV(out, "Network", string(upStack.Network))
-		ui.KV(out, "NAT", natLabel(upStack.AllowNAT))
 		fmt.Fprintln(out)
-		ui.Warn(out, "Boilerplate — no resources created")
+		ui.Info(out, "Validated stack %q", upStack.Name)
+		ui.Setting(out, "Region", upStack.Region)
+		ui.Setting(out, "Storage", string(upStack.Storage))
+		ui.Setting(out, "Instance", upStack.InstanceType)
+		ui.Setting(out, "Image", fmt.Sprintf("%s / %s:%s", upStack.Image.Registry, upStack.Image.Repo, upStack.Image.Tag))
+		ui.Setting(out, "DNS", string(upStack.DNS))
+		ui.Setting(out, "Network", string(upStack.Network))
+		ui.Setting(out, "NAT", natLabel(upStack.AllowNAT))
+		fmt.Fprintln(out)
+		ui.Info(out, "Boilerplate — no resources created")
 		return nil
 	},
 }

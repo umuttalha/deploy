@@ -17,8 +17,8 @@ var downCmd = &cobra.Command{
 		stackName := args[0]
 
 		ui.Header(out, "Deploy CLI", version.Version)
-		ui.Step(out, "Tearing down stack %q", stackName)
-		ui.Warn(out, "Boilerplate — no resources deleted")
+		ui.Info(out, "Tearing down stack %q", stackName)
+		ui.Info(out, "Boilerplate — no resources deleted")
 		// TODO: build awsx.Clients, cloudflarex.Clients, ghcr.Clients;
 		// call DestroyEC2 / DestroyVPC / Destroy / DestroyECR / DestroyR2 / DestroyDNS / DestroyPackage
 		// in reverse-dependency order.
