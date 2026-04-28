@@ -1,8 +1,16 @@
 package cli
 
 import (
+	"errors"
+
 	"github.com/spf13/cobra"
 )
+
+// ErrSilent signals that a command has already rendered its own error output
+// and main should exit non-zero without re-printing.
+var ErrSilent = errors.New("silent")
+
+var errSilent = ErrSilent
 
 type rootFlags struct {
 	profile         string
